@@ -3,12 +3,13 @@ import Header from '../components/Header/header';
 import Sidebar from '../components/Sidebar/index';
 
 
-const DefaultLayout = ({ children, role, sessionExpired }) => {
+const DefaultLayout = ({ children, role, sessionExpired  }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  console.log(sessionExpired);
 
   return (
     <>
+    
+      
       {!sessionExpired ? (
         <div className="dark:bg-boxdark-2 dark:text-bodydark">
           <div className="flex h-screen overflow-hidden">

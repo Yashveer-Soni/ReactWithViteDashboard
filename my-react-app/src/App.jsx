@@ -1,11 +1,12 @@
-import React, { Suspense, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import React, { useEffect, useState, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
-import { loginUser } from './Auth/authSlice';  
+import { restoreSession } from './Auth/authSlice';  // Use restoreSession
 import 'react-toastify/dist/ReactToastify.css';
 import DefaultLayout from './layout/DefaultLayout';
 import { FetchProducts } from './api/FetchProducts';
+import Spinner from './components/LoadingSpinner';
 
 const Header = React.lazy(() => import('./components/Header/header'));
 const Home = React.lazy(() => import('./components/Index'));
@@ -23,20 +24,38 @@ const Index = React.lazy(() => import('./components/Pages/Dashboard/Index'));
 
 function App() {
   const dispatch = useDispatch();
-  const { isLoggedIn, role, isLoading } = useSelector((state) => state.auth);
+  const { isLoggedIn, role } = useSelector((state) => state.auth);
+
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
+    
     if (accessToken && !isLoggedIn) {
-      // If the token exists but the user is not logged in yet, restore the login state
-      const email = localStorage.getItem('username');
-      const storedRole = localStorage.getItem('role');
-      dispatch(loginUser({ email, password: 'restoredSession' }));  // Replace password logic for token restoration
+      // Dispatch restoreSession instead of manual login
+      dispatch(restoreSession())
+        .then(() => {
+          setIsAuthChecked(true);
+        })
+        .catch(() => {
+          setIsAuthChecked(false);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setIsAuthChecked(true);
+      setIsLoading(false);
     }
   }, [dispatch, isLoggedIn]);
 
   if (isLoading) {
-    return <div>Loading...</div>;  // Add a proper loader if needed
+    return <Spinner />;  // Display a spinner while checking session
+  }
+
+  if (!isAuthChecked) {
+    return <div>Checking authentication...</div>;
   }
 
   const routes = [
@@ -57,7 +76,7 @@ function App() {
       <Router>
         <div className="App">
           <DefaultLayout role={role} sessionExpired={!isLoggedIn}>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Spinner />}>
               <Routes>
                 <Route path="/signin/" element={<Signin />} />
                 <Route path="*" element={<Error />} />

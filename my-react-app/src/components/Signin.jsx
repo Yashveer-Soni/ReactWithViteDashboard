@@ -7,39 +7,32 @@ import { loginUser } from '../Auth/authSlice';
 import LoadingSpinner from './LoadingSpinner';
 
 const Signin = () => {
-    const [email, setEmail] = useState(() => localStorage.getItem('email') || '');
+  const [email, setEmail] = useState(() => localStorage.getItem('email') || '');
   const [password, setPassword] = useState(() => localStorage.getItem('password') || '');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  // Access auth state from Redux
-  const { isLoggedIn, isLoading, role, error } = useSelector((state) => state.auth);
+  const { isLoggedIn, isLoading,  error } = useSelector((state) => state.auth);
 
-  // Redirect if already logged in
-  useEffect(() => {
-    const accessToken = localStorage.getItem('access_token');
-    if (accessToken) {
-      navigate('/');
-    }
-  }, [navigate]);
+  // useEffect(() => {
+  //   const accessToken = localStorage.getItem('access_token');
+  //   if (accessToken) {
+  //     navigate('/');
+  //   }
+  // }, [navigate]);
 
-  // Handle sign-in
   const handleSignIn = (e) => {
     e.preventDefault();
     dispatch(loginUser({ email, password })); 
   };
 
-  // Toast notifications and navigation on state changes
   useEffect(() => {
     if (isLoggedIn) {
-      toast.success('Login successful!', {
-        autoClose: 5000,
-        onClose: () => navigate('/'),
-      });
+      toast.success('Login successful!');
+      navigate('/');
     }
     if (error) {
       toast.error('Login failed. Please check your credentials.', {
-        autoClose: 5000,
       });
     }
   }, [isLoggedIn, error, navigate]);

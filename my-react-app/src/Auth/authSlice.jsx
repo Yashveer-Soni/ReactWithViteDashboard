@@ -14,8 +14,6 @@ const initialState = {
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, { rejectWithValue }) => {
-    console.log('Login credentials:', email, password);
-
     try {
       const csrfToken = Cookies.get('csrftoken');
       const response = await axios.post(
@@ -29,13 +27,13 @@ export const loginUser = createAsyncThunk(
         }
       );
 
-      // Store tokens and user data
+      // Store tokens and user data in localStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
       localStorage.setItem('role', response.data.role);
       localStorage.setItem('username', response.data.email);
-      localStorage.setItem('email', email); 
-      localStorage.setItem('password', password); 
+      localStorage.setItem('email', email);
+      localStorage.setItem('password', password);  // Store for session restoration (you may handle it securely)
 
       return {
         accessToken: response.data.access,
@@ -48,6 +46,30 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// Action to restore session from localStorage
+export const restoreSession = createAsyncThunk(
+  'auth/restoreSession',
+  async (_, { rejectWithValue }) => {
+    try {
+      const accessToken = localStorage.getItem('access_token');
+      const role = localStorage.getItem('role');
+      const user = localStorage.getItem('username');
+
+      if (accessToken && role && user) {
+        return {
+          accessToken,
+          role,
+          user,
+        };
+      } else {
+        return rejectWithValue('No session found');
+      }
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -56,11 +78,12 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.role = null;
       state.user = null;
-      localStorage.clear(); 
+      localStorage.clear();  // Clear all stored tokens and user info
     },
   },
   extraReducers: (builder) => {
     builder
+      // Handle login
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -75,6 +98,22 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isLoggedIn = false;
         state.error = action.payload;
+      })
+      // Handle session restoration
+      .addCase(restoreSession.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(restoreSession.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isLoggedIn = true;
+        state.role = action.payload.role;
+        state.user = action.payload.user;
+      })
+      .addCase(restoreSession.rejected, (state) => {
+        state.isLoading = false;
+        state.isLoggedIn = false;
+        state.role = null;
+        state.user = null;
       });
   },
 });
