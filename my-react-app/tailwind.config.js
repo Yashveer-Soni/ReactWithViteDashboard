@@ -269,6 +269,7 @@ export default {
     require('flowbite/plugin')({
       charts: true,
   }),
+  require("tailgrids/plugin"),
   ],
 }
 

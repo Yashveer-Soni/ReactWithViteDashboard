@@ -4,7 +4,7 @@ import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-const FullscreenSwiper = ({ images }) => {
+const FullscreenSwiper = ({ product_images }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedSlide, setSelectedSlide] = useState(null);
 
@@ -23,12 +23,11 @@ const FullscreenSwiper = ({ images }) => {
             <Swiper
                 spaceBetween={0}
                 slidesPerView={1}
-                navigation
                 modules={[Navigation]}
                 onSlideChange={() => console.log('slide change')}
                 onSwiper={(swiper) => console.log(swiper)}
             >
-                {images.map((image, index) => (
+                {product_images.map((image, index) => (
                     <SwiperSlide key={index} onClick={() => openFullscreen(image)}>
                         <img src={image.image} alt={`Slide ${index + 1}`} style={{ width: '100%' ,objectFit:'contain', height:'100%', cursor: 'pointer' }} />
                     </SwiperSlide>
@@ -38,7 +37,7 @@ const FullscreenSwiper = ({ images }) => {
             {isOpen && (
                 <div style={fullscreenStyle} onClick={closeFullscreen}>
                     <div style={slideStyle}>
-                        <img src={selectedSlide.image} alt="Selected" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                        <img src={selectedSlide.image} alt="Selected"  />
                     </div>
                 </div>
             )}

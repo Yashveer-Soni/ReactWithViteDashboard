@@ -15,6 +15,7 @@ import exportToExcel from "../../utils/exportToExcel";
 import TableComponent from "../Tables/TableComponent";
 import ActionButton from "../../snippets/ActionBtn";
 // import SkeletonLoader from "../../snippets/SkeletonLoader";
+import ProductFilter from '../../Helper/Filter/ProductFilter';
 
 const ShowInventoryProductsList = ({ openModel }) => {
     const { products, loading, error, fetchProducts, currentPage, setCurrentPage, totalPages } = useContext(ProductContext);
@@ -25,12 +26,13 @@ const ShowInventoryProductsList = ({ openModel }) => {
     const [updateModalOpen, setUpdateModalOpen] = useState(false);
     const [progress, setProgress] = useState(0);
     const [isExporting, setIsExporting] = useState(false);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const handleExport = () => {
         exportToExcel(products, setIsExporting, setProgress);
     };
 
     const handleProductAdded = async () => {
-        fetchProducts(); // Re-fetch the product list after adding
+        fetchProducts(); 
     };
 
     const openDeleteDialog = (productId) => {
@@ -90,13 +92,14 @@ const ShowInventoryProductsList = ({ openModel }) => {
             /> */}
             <div className="flex justify-between items-center mt-5 mb-5">
                 <h3 className="text-xl font-bold">Products</h3>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 relative">
                     <ActionButton
                         label="Add Product"
                         onClick={() => openModel(handleProductAdded)}
                         className="bg-blue-700 border-none px-5 text-sm text-white font-medium"
                     />
                     <ActionButton
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
                         label="Filters"
                         className="bg-blue-700 border-none px-5 text-sm text-white font-medium"
                     />
@@ -106,6 +109,7 @@ const ShowInventoryProductsList = ({ openModel }) => {
                         onClick={handleExport}
                         className="bg-blue-700 border-none px-5 text-sm text-white font-medium"
                     />
+                {isFilterOpen && <ProductFilter isOpen={isFilterOpen} />}
                 </div>
             </div>
             <TableComponent onClickEdit={openUpdateModal} onClickDelete={openDeleteDialog} products={products} loading={loading} />

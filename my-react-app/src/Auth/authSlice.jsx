@@ -16,6 +16,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const csrfToken = Cookies.get('csrftoken');
+      console.log(csrfToken);
       const response = await axios.post(
         'http://localhost:8000/api/token/',
         { email, password },

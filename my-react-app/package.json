@@ -68,6 +68,7 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.12",
     "swiper": "^11.1.14",
+    "tailgrids": "^2.2.7",
     "vite-plugin-svgr": "^4.2.0",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5",
