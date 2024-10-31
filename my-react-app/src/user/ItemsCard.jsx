@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import Paginate from '../snippets/Paginate';
+import Paginate from './Pagination/Paginate';
 import FormatWeight from '../Helper/formatWeight';
 import { Link, NavLink } from 'react-router-dom';
 

@@ -7,6 +7,7 @@ import ChartOne from '../../Charts/ChartOne'
 import ChartTwo from '../../Charts/ChartTwo'
 import ChartThree from '../../Charts/ChartThree'
 import { Icon } from '@iconify/react';
+import UserInfo from '../../UserInfo'
 export default function Index() {
     const cardsData = [
         {
@@ -80,6 +81,7 @@ export default function Index() {
       ];
   return (
     <div className="mx-auto max-w-screen-2xl ">
+      <UserInfo></UserInfo>
         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 py-3">
         {cardsData.map((card, index) => (
             <HomepageCards 

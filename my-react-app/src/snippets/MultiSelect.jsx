@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-const MultiSelect = ({  onChangeSelections }) => {
-    const [collections, setCollections] = useState([
+const MultiSelect = ({ onChangeSelections }) => {
+    const [collections] = useState([
         'Collection 1', 
         'Collection 2', 
         'Collection 3', 
@@ -10,7 +10,7 @@ const MultiSelect = ({  onChangeSelections }) => {
         'Collection 6'
     ]);
     const [selectedCollections, setSelectedCollections] = useState([]);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setCollectionValue] = useState('');
     const [filteredCollections, setFilteredCollections] = useState(collections);
 
     useEffect(() => {
@@ -28,7 +28,7 @@ const MultiSelect = ({  onChangeSelections }) => {
         if (!selectedCollections.includes(collection)) {
             const newSelections = [...selectedCollections, collection];
             setSelectedCollections(newSelections);
-            setInputValue(''); // Clear input after selection
+            setCollectionValue(''); // Clear input after selection
             onChangeSelections(newSelections); // Pass selections to parent component
         }
     };
@@ -41,7 +41,7 @@ const MultiSelect = ({  onChangeSelections }) => {
         onChangeSelections(newSelections);
     };
 
-    const handleKeyDown = (event) => {
+    const handleKey = (event) => {
         if (event.key === 'Enter' && inputValue && filteredCollections.length) {
             event.preventDefault();
             handleSelect(filteredCollections[0]); // Select the first filtered option
@@ -68,8 +68,8 @@ const MultiSelect = ({  onChangeSelections }) => {
                 <input
                     type="text"
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
+                    onChange={(e) => setCollectionValue(e.target.value)}
+                    onKeyDown={handleKey}
                     placeholder="Select collections..."
                     className="flex-1 text-sm border-none p-0 font-medium focus:ring-0 focus:outline-none dark:bg-gray-700 dark:text-white"
                 />

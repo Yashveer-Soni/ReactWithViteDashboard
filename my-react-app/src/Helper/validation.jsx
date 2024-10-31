@@ -1,8 +1,6 @@
 import * as Yup from 'yup';
 
 const validation = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Email is required'),
-  password: Yup.string().required('Password is required'),
   productName: Yup.string().required('Product name is required'),
   productId: Yup.number().required('Product ID is required'),
   MRP: Yup.number().required('MRP is required'),

@@ -11,6 +11,7 @@ export const FetchProducts = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [singleProduct, setSingleProduct] = useState(null);
     const [totalPages, setTotalPages] = useState(1);
     const itemsPerPage = 20;
     const token = localStorage.getItem('access_token');
@@ -30,6 +31,22 @@ export const FetchProducts = ({ children }) => {
             });
             setProducts(response.data.results || []); // Ensure results is an array
             setTotalPages(Math.ceil(response.data.count / itemsPerPage)); // Calculate total pages
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchSingleProduct = async (id) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/inventory/${id}/`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setSingleProduct(response.data); 
         } catch (err) {
             setError(err);
         } finally {
@@ -59,20 +76,23 @@ export const FetchProducts = ({ children }) => {
     };
 
     useEffect(() => {
-        fetchProducts(); // Fetch products when currentPage changes
+        fetchProducts(); 
     }, [currentPage]);
 
     useEffect(() => {
-        fetchSliderProducts(); // Fetch slider products once when the component mounts
+        fetchSliderProducts(); 
     }, []);
 
     const memoizedProducts = useMemo(() => products, [products]);
     const memoizedSliderProducts = useMemo(() => sliderProducts, [sliderProducts]);
+    const memoizedSingleProduct = useMemo(() => singleProduct, [singleProduct]);
 
     return (
         <ProductContext.Provider value={{
             products: memoizedProducts,
             sliderProducts: memoizedSliderProducts,
+            singleProduct: memoizedSingleProduct,
+            fetchSingleProduct,
             loading,
             error,
             fetchProducts,

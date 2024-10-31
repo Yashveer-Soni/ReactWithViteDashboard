@@ -2,14 +2,12 @@ import React, { useEffect, useState, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
-import { restoreSession } from './Auth/authSlice';  // Use restoreSession
+import { restoreSession } from './Auth/authSlice';
 import 'react-toastify/dist/ReactToastify.css';
 import DefaultLayout from './layout/DefaultLayout';
-import { FetchProducts } from './api/FetchProducts';
 import Spinner from './components/LoadingSpinner';
+import { FetchProducts } from './api/FetchProducts';
 
-const Header = React.lazy(() => import('./components/Header/header'));
-const Home = React.lazy(() => import('./components/Index'));
 const Inventory = React.lazy(() => import('./components/Inventory/Inventory'));
 const Report = React.lazy(() => import('./components/Reports'));
 const Orders = React.lazy(() => import('./components/Orders'));
@@ -31,9 +29,7 @@ function App() {
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
-    
     if (accessToken && !isLoggedIn) {
-      // Dispatch restoreSession instead of manual login
       dispatch(restoreSession())
         .then(() => {
           setIsAuthChecked(true);
@@ -51,7 +47,7 @@ function App() {
   }, [dispatch, isLoggedIn]);
 
   if (isLoading) {
-    return <Spinner />;  // Display a spinner while checking session
+    return <Spinner />;
   }
 
   if (!isAuthChecked) {
@@ -59,15 +55,14 @@ function App() {
   }
 
   const routes = [
-    { path: '/Index', component: Index, allowedRoles: ['admin'] },
-    { path: '/Inventory', component: Inventory, allowedRoles: ['admin'] },
-    { path: '/Reports', component: Report, allowedRoles: ['admin'] },
-    { path: '/Orders', component: Orders, allowedRoles: ['admin'] },
-    { path: '/Inventory/product/:id', component: ProductInfo, allowedRoles: ['admin'] },
-    { path: '/Suppliers', component: Suppliers, allowedRoles: ['admin'] },
+    { path: '/inventory', component: Inventory, allowedRoles: ['admin'] },
+    { path: '/reports', component: Report, allowedRoles: ['admin'] },
+    { path: '/orders', component: Orders, allowedRoles: ['admin'] },
+    { path: '/inventory/product/:id', component: ProductInfo, allowedRoles: ['admin'] },
+    { path: '/suppliers', component: Suppliers, allowedRoles: ['admin'] },
     { path: '/search-results', component: SearchResults, allowedRoles: ['admin', 'user'] },
-    { path: '/', component: Index, allowedRoles: ['admin'] },
-    { path: '/', component: UserHome, allowedRoles: ['user'] },
+    { path: '/home', component: UserHome, allowedRoles: ['user'] },
+    { path: '/dashboard', component: Index, allowedRoles: ['admin'] },
     { path: '/product/:id', component: ProductPage, allowedRoles: ['user'] },
   ];
 
@@ -80,9 +75,13 @@ function App() {
               <Routes>
                 <Route path="/signin/" element={<Signin />} />
                 <Route path="*" element={<Error />} />
+                <Route
+                  path="/"
+                  element={role === 'admin' ? <Navigate to="/dashboard" /> : <Navigate to="/home" />}
+                />
                 {routes.map(({ path, component: Component, allowedRoles }) => (
                   allowedRoles.includes(role) ? (
-                    <Route key={path} path={path} element={<Component />} />
+                    <Route key={path} path={path} element={<Component role={role} />} />
                   ) : (
                     <Route key={path} path={path} element={<Navigate to="/signin/" />} />
                   )

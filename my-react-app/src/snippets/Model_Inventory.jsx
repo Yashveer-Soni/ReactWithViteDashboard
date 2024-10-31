@@ -1,4 +1,4 @@
-import { useState, React, useEffect } from "react";
+import { useState, React, useEffect, useContext } from "react";
 import Category_Select from "./CustomCategorySelect";
 import SubCategory_Select from "./CustomSubCategorySelect";
 import Brand_Select from "./CustomBrandsSelect";
@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios"; 
 import { motion } from 'framer-motion';
 
-// import AddBrand from '../components/Inventory/Brand/AddBrand';
+import AddBrand from '../components/Inventory/Brand/AddBrand';
 import TextEditor from "../utils/TextEditor";
 // import SelectCollection from "./SelectCollection"
 import SelectProductStatus from "./SelectProductStatus";
@@ -20,9 +20,14 @@ import DatePickerComponent from "./DatePicker";
 import MultiSelect from "./MultiSelect";
 import formatDate from "../Helper/formatDate";
 import validation from "../Helper/validation";
+import { ProductContext } from "../api/FetchProducts";
+import DeleteBrand from "../components/Inventory/Brand/DeleteBrand";
+import { BrandsContext } from "../api/FetchBrands";
 
 
 const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
+  const {fetchProducts}=useContext(ProductContext);
+  const {fetchBrands}=useContext(BrandsContext);
   const [productName, setProductName] = useState(localStorage.getItem("productName") || "");
   const [productId, setProductId] = useState(localStorage.getItem("productId") || "");
   const [MRP, setMRP] = useState(localStorage.getItem("MRP") || "");
@@ -36,6 +41,7 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   const [selectedSubCategory, setSubSelectedCategory] = useState(localStorage.getItem("selectedSubCategory") || null);
   const [selectedBrand, setSelectedBrand] = useState(localStorage.getItem("selectedBrand") || null);
   const [open, setOpen] = useState(false);
+  const [openDeleteBrandModal, setOpenDelBrand] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [editorContent, setEditorContent] = useState(localStorage.getItem("editorContent") || '');
@@ -45,7 +51,7 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   const [margin, setMargin] = useState(localStorage.getItem("margin") || "");
   const [tags, setTags] = useState(JSON.parse(localStorage.getItem("tags")) || []);
   const [collections, setCollections] = useState(JSON.parse(localStorage.getItem("collections")) || []);
-  const [files, setFiles] = useState(JSON.parse(localStorage.getItem("files")) || []);
+  const [files, setFiles] = useState([]);
   const [sellingrate, setsellingRate] = useState(localStorage.getItem("sellingrate") || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -58,30 +64,12 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   };
   
 
-  console.log("productName" + productName);
-  console.log("productId" + productId);
-  console.log("MRP" + MRP);
-  console.log("purchaseRate" + purchaseRate);
-  console.log("weight" + weight);
-  console.log("weightType" + weightType);
-  console.log("quantity" + quantity);
-  console.log("expiryDate" + expiryDate);
-  console.log("packagingDate" + packagingDate);
-  console.log("selectedCategory" + selectedCategory);
-  console.log("selectedSubCategory" + selectedSubCategory);
-  console.log("selectedBrand" + selectedBrand);
-  console.log("editorContent" + editorContent);
-  console.log("selectedStatus" + selectedStatus);
-  console.log("costPerItem" + costPerItem);
-  console.log("profit" + profit);
-  console.log("margin" + margin);
-  console.log("tags" + tags);
-  console.log("collections" + collections);
+ 
   console.log("files" + files);
-  console.log("sellingrate" + sellingrate);
 
-
-
+  const handleFilesUpdate = (newFiles) => {
+    setFiles(newFiles);
+  }
   const handleCostChange = (e) => {
     const cost = parseFloat(e.target.value) || 0;
     setCostPerItem(cost);
@@ -107,9 +95,16 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   const handleClickOpen = () => {
     setOpen(true);
   };
+  const OpenDeleteBrand=()=>{
+    setOpenDelBrand(true);
+  }
 
   const handleClose = () => {
     setOpen(false);
+  };
+  const handleCloseDeleteBrand = () => {
+    fetchBrands();
+    setOpenDelBrand(false);
   };
 
   var fileValidate = false;
@@ -125,9 +120,7 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   const handleEditorChange = (content) => {
     setEditorContent(content);
   };
-  const handleFilesUpdate = (newFiles) => {
-    setFiles(newFiles);
-  };
+;
 
   const SelectedProductStatus = (status) => {
     setSelectedStatus(status);
@@ -151,7 +144,6 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
     localStorage.setItem("selectedCategory", selectedCategory);
     localStorage.setItem("selectedSubCategory", selectedSubCategory);
     localStorage.setItem("selectedBrand", selectedBrand);
-    localStorage.setItem("files", JSON.stringify(files));
     localStorage.setItem("editorContent", editorContent);
     localStorage.setItem("costPerItem", costPerItem);
     localStorage.setItem("profit", profit);
@@ -200,13 +192,13 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   
     try {
       await validation.validate(formValues, { abortEarly: false });
-      // Clear errors if validation is successful
       setFormErrors({});
     } catch (error) {
       const errors = error.inner.reduce((acc, curr) => {
         acc[curr.path] = curr.message; // Store error messages keyed by the input name
         return acc;
       }, {});
+      console.log(errors);
       setFormErrors(errors);
       setIsAdding(false);
       setIsSubmitting(false);
@@ -245,9 +237,8 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
     formData.append('expiry_date', expiryDate ? formatDate(expiryDate) : '');
     formData.append('pkt_date', packagingDate ? formatDate(expiryDate) : '');
 
-    // Append images to formData
     files.forEach((file) => {
-      formData.append('images', file);  // 'images' is the key in the Django view
+      formData.append('images', file); 
     });
 
     try {
@@ -266,12 +257,13 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
 
       // Reset fields after successful submission
       // resetFields();
-
+      fetchProducts();
       toast.success("Product added successfully");
-      onClose(); // Close the modal after successful submission
+      onClose(); 
       if (onProductAdded) {
         onProductAdded();
       }
+
     } catch (error) {
       const errorMessage = error.response && error.response.data && error.response.data.error
         ? error.response.data.error
@@ -324,8 +316,9 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
 
   return (
     <>
-      {/* <AddBrand open={open} onClose={handleClose} /> */}
-      <div className={`${isOpen ? "block" : "hidden"} rounded-lg  inset-0 bg-white dark:bg-boxdark  flex justify-center items-center `}>
+        <AddBrand open={open} onClose={handleClose} />
+        <DeleteBrand openDelBrand={openDeleteBrandModal} onCloseDelBrand={handleCloseDeleteBrand} />
+      <div className={`${isOpen ? "block" : "hidden"} rounded-lg mt-7  inset-0 bg-white dark:bg-boxdark  flex justify-center items-center `}>
         <div className=" p-6 rounded-lg shadow-lg h-full w-full ">
         <form id="myForm" className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3  gap-4 " onSubmit={handleSubmit}>
           <div className="">
@@ -381,7 +374,7 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
                 <div className="flex justify-end gap-1 mb-3">
                   <Icon width={20} className="cursor-pointer" icon={'gg:add'} onClick={handleClickOpen} />
                   <Icon width={20} className="cursor-pointer" icon={'fluent-color:edit-20'} />
-                  <Icon width={20} className="cursor-pointer" icon={'marketeq:delete'} />
+                  <Icon width={20} className="cursor-pointer" icon={'marketeq:delete'} onClick={OpenDeleteBrand} />
                 </div>
               </div>
             </div>

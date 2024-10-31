@@ -3,20 +3,19 @@ import React, { useState, useRef } from 'react';
 const TagSelect = ({ onChangeTags }) => {
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const inputRef = useRef(null); // Ref for the input to focus
+    const inputRef = useRef(null); 
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && inputValue.trim()) {
-            event.preventDefault(); // Prevent form submission
-            if (!tags.includes(inputValue.trim())) { // Prevent duplicates
+            event.preventDefault(); // Prevents page refresh or input clearing
+            if (!tags.includes(inputValue.trim())) { 
                 const newTags = [...tags, inputValue.trim()];
                 setTags(newTags);
-                onChangeTags(newTags); // Notify parent component
+                onChangeTags(newTags); 
                 setInputValue('');
-                inputRef.current.focus(); // Automatically focus input
+                inputRef.current.focus(); 
             }
         } else if (event.key === 'Backspace' && !inputValue && tags.length) {
-            // Remove the last tag on Backspace if input is empty
             const newTags = tags.slice(0, -1);
             setTags(newTags);
             onChangeTags(newTags);
@@ -26,7 +25,7 @@ const TagSelect = ({ onChangeTags }) => {
     const handleTagRemove = (tagToRemove) => {
         const newTags = tags.filter(tag => tag !== tagToRemove);
         setTags(newTags);
-        onChangeTags(newTags); // Notify parent component
+        onChangeTags(newTags);
     };
 
     return (

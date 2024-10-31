@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
-import { logout } from '../../Auth/authSlice';
-import { useDispatch } from 'react-redux';
 
 // import Logo from '../../images/logo/logo.svg';
 
@@ -13,17 +11,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const [isSuperuser, setIsSuperuser] = useState(false);
   const trigger = useRef(null);
   const sidebar = useRef(null);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
   
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/signin');
-};
   // useEffect(() => {
   //   const clickHandler = ({ target }) => {
   //     if (!sidebar.current || !trigger.current) return;
@@ -362,9 +354,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   </svg>
                   Settings
                 </NavLink>
-              </li>
-              <li className='mt-10'>
-              <button onClick={handleLogout} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Log Out</button>
               </li>
               
             </ul>

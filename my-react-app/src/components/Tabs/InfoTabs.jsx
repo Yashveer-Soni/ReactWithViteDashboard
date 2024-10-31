@@ -4,7 +4,7 @@ import PurchasesComponent from "../Inventory/PurchasesComponent";
 import AdjustmentsComponent from "../Inventory/AdjustmentsComponent";
 import HistoryComponent from "../Inventory/HistoryComponent";
 
-const Tab = ({productInfo}) => {
+const Tab = ({productInfo,product_images}) => {
   const [open, setOpen] = useState("Overview");
 
   const handleTabOpen = (tabCategory) => {
@@ -61,7 +61,7 @@ const Tab = ({productInfo}) => {
                   </a>
                 </div>
                 <TabContent tabCategory="Overview" open={open}>
-                  <OverviewComponent productInfo={productInfo} />
+                  <OverviewComponent productInfo={productInfo} product_images={product_images} />
                 </TabContent>
                 <TabContent tabCategory="Purchases" open={open}>
                   <PurchasesComponent />

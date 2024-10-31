@@ -1,7 +1,6 @@
 import React from 'react'
 import FullscreenSwiper from './FullScreenSlider'
-export default function OverviewComponent({productInfo}) {
-    const product_images = productInfo.item.images || [];
+export default function OverviewComponent({productInfo,product_images}) {
   return (
     <div className='grid gap-10 grid-cols-1 md:grid-cols-2 2xl:grid-cols-2 '>
         <div>
@@ -13,6 +12,10 @@ export default function OverviewComponent({productInfo}) {
             <div className='pt-5 flex justify-between items-center md:w-100'>
                 <h4 className='md:w-80'>Product ID</h4>
                 <h4 className='text-black dark:text-gray-200 w-25 md:w-50'>{productInfo.item.bar_code}</h4>
+            </div>
+            <div className='pt-5 flex justify-between items-center md:w-100'>
+                <h4 className='md:w-80'>Product Brand</h4>
+                <h4 className='text-black dark:text-gray-200 w-25 md:w-50'>{productInfo?.item?.brand?.brand_name || 'Brand Not Available'}</h4>
             </div>
             <div className='pt-5 flex justify-between items-center md:w-100'>
                 <h4 className='md:w-80'>Product category</h4>

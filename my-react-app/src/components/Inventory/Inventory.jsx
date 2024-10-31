@@ -8,6 +8,7 @@ import { FetchProducts } from "../../api/FetchProducts";
 import { Icon } from '@iconify/react';
 import HomepageCards from "../Card/HomepageCards";
 import TableComponent from "../Tables/TableComponent";
+import BrandsProvider from "../../api/FetchBrands";
 const Inventory = () => {
     const [modelopen, setmodelopen] = useState(false);
 
@@ -91,24 +92,26 @@ const Inventory = () => {
 
     return (
         <>
+        <BrandsProvider>
          <FetchProducts>
-         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 py-3">
-         {cardsData.map((card, index) => (
-            <HomepageCards 
-            key={index}
-            icon={card.icon}
-            title={card.title}
-            subtitle={card.subtitle}
-            percentage={card.percentage}
-            trend={card.trend}
-            />
-        ))}
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 py-3">
+          {cardsData.map((card, index) => (
+              <HomepageCards 
+              key={index}
+              icon={card.icon}
+              title={card.title}
+              subtitle={card.subtitle}
+              percentage={card.percentage}
+              trend={card.trend}
+              />
+          ))}
+          </div>
             <div className="overall">
                 <ShowInventoryProductsList openModel={openModel} />
             </div>
             <ModelInventory isOpen={modelopen} onClose={closemodel} />
             </FetchProducts>
+            </BrandsProvider>
         </>
     )
 }

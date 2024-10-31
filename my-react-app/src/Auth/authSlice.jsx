@@ -10,31 +10,23 @@ const initialState = {
   error: null,
 };
 
-// Asynchronous thunk to handle login
+// Login user and store only tokens in local storage
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, { rejectWithValue }) => {
     try {
       const csrfToken = Cookies.get('csrftoken');
-      console.log(csrfToken);
       const response = await axios.post(
         'http://localhost:8000/api/token/',
         { email, password },
         {
-          headers: {
-            'X-CSRFToken': csrfToken,
-          },
+          headers: { 'X-CSRFToken': csrfToken },
           withCredentials: true,
         }
       );
 
-      // Store tokens and user data in localStorage
       localStorage.setItem('access_token', response.data.access);
       localStorage.setItem('refresh_token', response.data.refresh);
-      localStorage.setItem('role', response.data.role);
-      localStorage.setItem('username', response.data.email);
-      localStorage.setItem('email', email);
-      localStorage.setItem('password', password);  // Store for session restoration (you may handle it securely)
 
       return {
         accessToken: response.data.access,
@@ -42,31 +34,29 @@ export const loginUser = createAsyncThunk(
         user: response.data.email,
       };
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || 'Login failed');
     }
   }
 );
 
-// Action to restore session from localStorage
+// Restore session and validate token with backend
 export const restoreSession = createAsyncThunk(
   'auth/restoreSession',
   async (_, { rejectWithValue }) => {
     try {
       const accessToken = localStorage.getItem('access_token');
-      const role = localStorage.getItem('role');
-      const user = localStorage.getItem('username');
+      if (!accessToken) return rejectWithValue('No session found');
 
-      if (accessToken && role && user) {
-        return {
-          accessToken,
-          role,
-          user,
-        };
-      } else {
-        return rejectWithValue('No session found');
-      }
+      const response = await axios.get('http://localhost:8000/api/validate_token/', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        withCredentials: true,
+      });
+
+      const { role, user } = response.data;
+      return { accessToken, role, user };
     } catch (error) {
-      return rejectWithValue(error);
+      localStorage.clear();  // Clear invalid session data
+      return rejectWithValue('Session expired or invalid');
     }
   }
 );
@@ -79,12 +69,11 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.role = null;
       state.user = null;
-      localStorage.clear();  // Clear all stored tokens and user info
+      localStorage.clear();
     },
   },
   extraReducers: (builder) => {
     builder
-      // Handle login
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -97,10 +86,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.isLoggedIn = false;
         state.error = action.payload;
       })
-      // Handle session restoration
       .addCase(restoreSession.pending, (state) => {
         state.isLoading = true;
       })

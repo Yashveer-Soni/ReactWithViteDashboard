@@ -22,6 +22,7 @@ import '@uppy/status-bar/dist/style.min.css';
 
 
 const FileUpload = ({ onFilesUpdate }) => {
+  const [image, setimage]=useState([]);
     useEffect(() => {
       const uppy = new Uppy({
         restrictions: {
@@ -36,7 +37,7 @@ const FileUpload = ({ onFilesUpdate }) => {
         target: '#uppy-dashboard', 
         replaceTargetContent: true,
         showProgressDetails: true, 
-        hideUploadButton: false, 
+        hideUploadButton: true, 
         proudlyDisplayPoweredByUppy: false, 
         restrictions:true,
         height:720,
@@ -46,11 +47,23 @@ const FileUpload = ({ onFilesUpdate }) => {
     }).use(Unsplash, { companionUrl: 'https://your-companion.com' }).use(Url, { companionUrl: 'https://your-companion.com' }).use(XHR, { endpoint: 'https://your-domain.com/upload' }).use(ImageEditor).use(ProgressBar, { target: '#status-bar' });
 
      uppy.on('file-added', (file) => {
-        onFilesUpdate(uppy.getFiles());
+        const files=uppy.getFiles();
+        const updatedImages = files.map((file) => ({
+          name: file.name,
+          data: file.data,
+        }));
+        setimage(updatedImages);
+        onFilesUpdate(updatedImages);
       });
   
       uppy.on('file-removed', (file) => {
-        onFilesUpdate(uppy.getFiles());
+        const files=uppy.getFiles();
+        const updatedImages = files.map((file) => ({
+          name: file.name,
+          data: file.data,
+        }));
+        setimage(updatedImages);
+        onFilesUpdate(updatedImages);
       });
       return () => uppy.destroy();
     }, []);

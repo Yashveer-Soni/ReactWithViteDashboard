@@ -4,7 +4,21 @@ import { Icon } from '@iconify/react';
 
 export default function TableComponent({ products, loading, onClickEdit, onClickDelete }) {
     if (loading) {
-        return <p>Loading...</p>;  // You can replace this with your skeleton loader if needed
+        return (
+            <div role="status" class=" animate-pulse">
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <div class="h-7 bg-gray-200 rounded-full dark:bg-gray-700 w-full mb-4"></div>
+                <span class="sr-only">Loading...</span>
+            </div>
+        );  
     }
 
     return (
@@ -42,7 +56,7 @@ export default function TableComponent({ products, loading, onClickEdit, onClick
                                 </th>
                                 <th className="px-6 py-4">
                                     <NavLink to={`/Inventory/product/${product.item.id}`}>
-                                        {product.item.brand.brand_name}
+                                        {product?.item?.brand?.brand_name || 'Brand Not Available'}
                                     </NavLink>
                                 </th>
                                 <th className="px-6 py-4">
@@ -57,7 +71,7 @@ export default function TableComponent({ products, loading, onClickEdit, onClick
                                 </th>
                                 <th className="px-6 py-4">₹{product.mrp}</th>
                                 <th className="px-6 py-4">₹{product.purchase_rate}</th>
-                                <th className="px-6 py-4">{product.unit.quantity}</th>
+                                <th className="px-6 py-4">{product.item.total_stock}</th>
                                 <th className="px-6 py-4">{product.unit.weight}</th>
                                 <th className="px-6 py-4">{product.pkt_date || 'N/A'}</th>
                                 <th className="px-6 py-4">{product.expired_date || 'N/A'}</th>
