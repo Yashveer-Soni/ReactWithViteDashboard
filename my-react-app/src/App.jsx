@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import DefaultLayout from './layout/DefaultLayout';
 import Spinner from './components/LoadingSpinner';
 import { FetchProducts } from './api/FetchProducts';
+import AccountSetting from './components/Account/AccountSetting';
+import Stock from './components/Inventory/Stock/Stock';
 
 const Inventory = React.lazy(() => import('./components/Inventory/Inventory'));
 const Report = React.lazy(() => import('./components/Reports'));
@@ -19,6 +21,7 @@ const SearchResults = React.lazy(() => import('./components/SearchResults'));
 const UserHome = React.lazy(() => import('./user/UserHome'));
 const ProductPage = React.lazy(() => import('./user/ProductPage'));
 const Index = React.lazy(() => import('./components/Pages/Dashboard/Index'));
+
 
 function App() {
   const dispatch = useDispatch();
@@ -58,7 +61,9 @@ function App() {
     { path: '/inventory', component: Inventory, allowedRoles: ['admin'] },
     { path: '/reports', component: Report, allowedRoles: ['admin'] },
     { path: '/orders', component: Orders, allowedRoles: ['admin'] },
+    { path: '/Account', component: AccountSetting, allowedRoles: ['admin'] },
     { path: '/inventory/product/:id', component: ProductInfo, allowedRoles: ['admin'] },
+    { path: '/inventory/stock', component: Stock, allowedRoles: ['admin'] },
     { path: '/suppliers', component: Suppliers, allowedRoles: ['admin'] },
     { path: '/search-results', component: SearchResults, allowedRoles: ['admin', 'user'] },
     { path: '/home', component: UserHome, allowedRoles: ['user'] },

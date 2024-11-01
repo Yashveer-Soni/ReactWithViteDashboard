@@ -1,10 +1,8 @@
 import React, { createContext, useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 
-// Create a context
 export const ProductContext = createContext();
 
-// Create a provider component
 export const FetchProducts = ({ children }) => {
     const [products, setProducts] = useState([]); 
     const [sliderProducts, setSliderProducts] = useState([]);
@@ -16,7 +14,6 @@ export const FetchProducts = ({ children }) => {
     const itemsPerPage = 20;
     const token = localStorage.getItem('access_token');
 
-    // Fetch products for the grid (paginated)
     const fetchProducts = async () => {
         setLoading(true);
         try {
@@ -25,12 +22,12 @@ export const FetchProducts = ({ children }) => {
                     'Authorization': `Bearer ${token}`
                 },
                 params: {
-                    page: currentPage,  // Use currentPage from state
+                    page: currentPage,
                     page_size: itemsPerPage
                 }
             });
-            setProducts(response.data.results || []); // Ensure results is an array
-            setTotalPages(Math.ceil(response.data.count / itemsPerPage)); // Calculate total pages
+            setProducts(response.data.results || []); 
+            setTotalPages(Math.ceil(response.data.count / itemsPerPage)); 
         } catch (err) {
             setError(err);
         } finally {
@@ -54,7 +51,6 @@ export const FetchProducts = ({ children }) => {
         }
     };
 
-    // Fetch products for the Swiper slider (no pagination)
     const fetchSliderProducts = async () => {
         setLoading(true);
         try {

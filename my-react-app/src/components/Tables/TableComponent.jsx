@@ -70,7 +70,7 @@ export default function TableComponent({ products, loading, onClickEdit, onClick
                                     </NavLink>
                                 </th>
                                 <th className="px-6 py-4">₹{product.mrp}</th>
-                                <th className="px-6 py-4">₹{product.purchase_rate}</th>
+                                <th className="px-6 py-4">₹{product.selling_price}</th>
                                 <th className="px-6 py-4">{product.item.total_stock}</th>
                                 <th className="px-6 py-4">{product.unit.weight}</th>
                                 <th className="px-6 py-4">{product.pkt_date || 'N/A'}</th>
