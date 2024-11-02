@@ -8,7 +8,8 @@ const CustomSubCategorySelect = ({ selectedCategoryId, onSelectSubCategory, sele
   const [selectedOption, setSelectedOption] = useState(localStorage.getItem("selectedSubCategory") || '');
 
   useEffect(() => {
-    if (selectedCategoryId) {
+    if (selectedCategoryId) { 
+      console.log(`Fetching subcategories for category ID: ${selectedCategoryId}`);
       axios.get(`http://127.0.0.1:8000/api/subcategories/?category=${selectedCategoryId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
@@ -19,7 +20,7 @@ const CustomSubCategorySelect = ({ selectedCategoryId, onSelectSubCategory, sele
         console.error("Error fetching subcategories:", error);
       });
     } else {
-      setSubCategories([]);
+      setSubCategories([]); // Reset subCategories if selectedCategoryId is null
     }
   }, [selectedCategoryId, token]);
 
@@ -31,8 +32,8 @@ const CustomSubCategorySelect = ({ selectedCategoryId, onSelectSubCategory, sele
 
   const handleChange = (value) => {
     setSelectedOption(value);
-    onSelectSubCategory(value); 
-    localStorage.setItem("selectedSubCategory", value); 
+    onSelectSubCategory(value);
+    localStorage.setItem("selectedSubCategory", value);
   };
 
   return (
@@ -41,8 +42,8 @@ const CustomSubCategorySelect = ({ selectedCategoryId, onSelectSubCategory, sele
       options={subCategories}
       selectedOption={selectedOption}
       onSelect={handleChange}
-      valueKey="id"         
-      labelKey="sub_category_name" 
+      valueKey="id"
+      labelKey="sub_category_name"
       placeholder="Choose a subcategory"
     />
   );

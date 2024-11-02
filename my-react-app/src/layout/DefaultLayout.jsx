@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header/header';
 import Sidebar from '../components/Sidebar/index';
 import UserHeader from '../user/Header/userHeader';
-
+import Breadcrumbs from '../snippets/BreadCrumbs';
 const DefaultLayout = ({ children, role, sessionExpired  }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -22,6 +22,7 @@ const DefaultLayout = ({ children, role, sessionExpired  }) => {
           }
               <main>
                 <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                <Breadcrumbs></Breadcrumbs>
                   {children}
                 </div>
               </main>

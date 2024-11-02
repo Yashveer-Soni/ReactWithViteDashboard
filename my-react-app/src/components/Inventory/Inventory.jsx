@@ -9,6 +9,7 @@ import { Icon } from '@iconify/react';
 import HomepageCards from "../Card/HomepageCards";
 import TableComponent from "../Tables/TableComponent";
 import BrandsProvider from "../../api/FetchBrands";
+
 const Inventory = () => {
     const [modelopen, setmodelopen] = useState(false);
 
