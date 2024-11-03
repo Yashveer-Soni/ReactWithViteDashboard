@@ -1,84 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import Compressor from '@uppy/compressor';
-import Webcam from '@uppy/webcam';
-import ScreenCapture from '@uppy/screen-capture';
-import GoogleDrive from '@uppy/google-drive';
-import GooglePhotos from '@uppy/google-photos';
-import Unsplash from '@uppy/unsplash';
-import XHR from '@uppy/xhr-upload';
-import Url from '@uppy/url';
-import ImageEditor from '@uppy/image-editor';
-import StatusBar from '@uppy/status-bar';
-import ProgressBar from '@uppy/progress-bar';
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
-import '@uppy/webcam/dist/style.min.css';
-import '@uppy/screen-capture/dist/style.min.css';
-import '@uppy/url/dist/style.min.css';
-import '@uppy/image-editor/dist/style.min.css';
-import '@uppy/status-bar/dist/style.min.css';
-
+import React, { useState, useRef } from 'react';
+import imageCompression from 'browser-image-compression';
+import ImageCropper from '../Helper/ImageCropper';
 
 const FileUpload = ({ onFilesUpdate }) => {
-  const [image, setimage]=useState([]);
-    useEffect(() => {
-      const uppy = new Uppy({
-        restrictions: {
-          maxNumberOfFiles: 5,
-          allowedFileTypes: ['image/*', 'video/*', 'application/pdf'],
-        },
-        autoProceed: false, 
-      });
-  
-      uppy.use(Dashboard, {
-        inline: true, 
-        target: '#uppy-dashboard', 
-        replaceTargetContent: true,
-        showProgressDetails: true, 
-        hideUploadButton: true, 
-        proudlyDisplayPoweredByUppy: false, 
-        restrictions:true,
-        height:720,
-      }).use(Compressor).use(Webcam).use(ScreenCapture).use(GoogleDrive, { companionUrl: 'https://your-companion.com' }).use(GooglePhotos, {
-      target: Dashboard,
-      companionUrl: 'https://your-companion.com',
-    }).use(Unsplash, { companionUrl: 'https://your-companion.com' }).use(Url, { companionUrl: 'https://your-companion.com' }).use(XHR, { endpoint: 'https://your-domain.com/upload' }).use(ImageEditor).use(ProgressBar, { target: '#status-bar' });
+    const [images, setImages] = useState([]);
+    const [currentImage, setCurrentImage] = useState(null);
+    const [previewImageIndex, setPreviewImageIndex] = useState(null);
 
-     uppy.on('file-added', (file) => {
-        const files=uppy.getFiles();
-        const updatedImages = files.map((file) => ({
-          name: file.name,
-          data: file.data,
-        }));
-        setimage(updatedImages);
-        onFilesUpdate(updatedImages);
-      });
-  
-      uppy.on('file-removed', (file) => {
-        const files=uppy.getFiles();
-        const updatedImages = files.map((file) => ({
-          name: file.name,
-          data: file.data,
-        }));
-        setimage(updatedImages);
-        onFilesUpdate(updatedImages);
-      });
-      return () => uppy.destroy();
-    }, []);
-  
+    const handleImageChange = async (e) => {
+        const files = Array.from(e.target.files);
+        for (const file of files) {
+            await handleImageUpload(file);
+        }
+    };
+
+    const handleImageUpload = async (file) => {
+        const compressedFile = await imageCompression(file, { maxSizeMB: 1 });
+        const newImage = URL.createObjectURL(compressedFile);
+        setImages((prevImages) => [...prevImages, newImage]);
+        onFilesUpdate((prevImages) => [...prevImages, compressedFile]);
+    };
+
+    const handleDeleteImage = (index) => {
+        setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+        onFilesUpdate((prevImages) => prevImages.filter((_, i) => i !== index));
+        setPreviewImageIndex(null); // Reset preview if deleted
+    };
+
+    const handleCrop = (index) => {
+        setCurrentImage(images[index]);
+        setPreviewImageIndex(index);
+    };
+
+    const handleImageCropped = (croppedImage) => {
+        setImages((prevImages) => {
+            const updatedImages = [...prevImages];
+            updatedImages[previewImageIndex] = croppedImage; // Update the cropped image
+            return updatedImages;
+        });
+        setPreviewImageIndex(null); // Close the cropper after cropping
+    };
+
     return (
-        <>
-         <div id="uppy-dashboard" ></div>
-         <div id="status-bar"></div>
-        </>
-    )
+        <div className="inset-0 bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+                <h2 className="text-lg font-semibold mb-4">Add Product Images</h2>
+                <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    className="mb-4"
+                />
+                {currentImage && (
+                    <ImageCropper
+                        imageToCrop={currentImage}
+                        onImageCropped={handleImageCropped}
+                        onCancel={() => setPreviewImageIndex(null)}
+                    />
+                )}
+                <div className="grid grid-cols-1 gap-4 mb-4">
+                    {images.map((image, index) => (
+                        <div key={index} className="relative">
+                            <img
+                                src={image}
+                                alt={`Preview ${index}`}
+                                className="w-100 object-cover rounded cursor-pointer"
+                                onClick={() => handleCrop(index)}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleDeleteImage(index)}
+                                className="absolute top-0 right-0 bg-red-500 h-7 w-7 text-white rounded-full p-1"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
 
-  };
-  
-  export default FileUpload;
-  
-    
-    
-
+export default FileUpload;

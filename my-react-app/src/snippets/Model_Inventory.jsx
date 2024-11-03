@@ -7,7 +7,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios"; 
 import { motion } from 'framer-motion';
-
 import AddBrand from '../components/Inventory/Brand/AddBrand';
 import TextEditor from "../utils/TextEditor";
 // import SelectCollection from "./SelectCollection"
@@ -65,11 +64,8 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   
 
  
-  console.log("files" + files);
 
-  const handleFilesUpdate = (newFiles) => {
-    setFiles(newFiles);
-  }
+
   const handleCostChange = (e) => {
     const cost = parseFloat(e.target.value) || 0;
     setCostPerItem(cost);
@@ -237,10 +233,10 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
     formData.append('expiry_date', expiryDate ? formatDate(expiryDate) : '');
     formData.append('pkt_date', packagingDate ? formatDate(expiryDate) : '');
 
-    files.forEach((file) => {
-      formData.append('images', file); 
+    files.forEach((file, index) => {
+      formData.append('files',file); 
     });
-
+    
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/products/', formData, {
         headers: {
@@ -323,7 +319,7 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
         <form id="myForm" className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3  gap-4 " onSubmit={handleSubmit}>
           <div className="">
             <div className="mb-6">
-              <FileUpload onFilesUpdate={handleFilesUpdate} />
+              <FileUpload onFilesUpdate={(files) => setFiles(files)} />
             </div>
           </div>
           <div className="space-y-6">
