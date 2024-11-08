@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
 
-const TextEditor = ({ onChange }) => {
-    const [content, setContent] = useState('');
+const TextEditor = ({ onChange, onUpdateValue }) => {
+    const [content, setContent] = useState(onUpdateValue||'');
 
     useEffect(() => {
         const desc = localStorage.getItem("editorContent");

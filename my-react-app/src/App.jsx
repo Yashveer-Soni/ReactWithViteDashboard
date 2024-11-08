@@ -10,6 +10,7 @@ import { FetchProducts } from './api/FetchProducts';
 import AccountSetting from './components/Account/AccountSetting';
 import Stock from './components/Inventory/Stock/Stock';
 import StockHistory from './components/Inventory/Stock/StockHistory';
+import collection from './components/Inventory/Collection/collection';
 
 const Inventory = React.lazy(() => import('./components/Inventory/Inventory'));
 const Report = React.lazy(() => import('./components/Reports'));
@@ -65,6 +66,7 @@ function App() {
     { path: '/Account', component: AccountSetting, allowedRoles: ['admin'] },
     { path: '/inventory/product/:id', component: ProductInfo, allowedRoles: ['admin'] },
     { path: '/inventory/stock', component: Stock, allowedRoles: ['admin'] },
+    { path: '/inventory/collection', component: collection, allowedRoles: ['admin'] },
     { path: '/inventory/stock/history', component: StockHistory, allowedRoles: ['admin'] },
     { path: '/suppliers', component: Suppliers, allowedRoles: ['admin'] },
     { path: '/search-results', component: SearchResults, allowedRoles: ['admin', 'user'] },

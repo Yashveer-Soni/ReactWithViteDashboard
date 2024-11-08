@@ -34,8 +34,8 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   const [weight, setWeight] = useState(localStorage.getItem("weight") || "");
   const [weightType, setWeightType] = useState(localStorage.getItem("weightType") || 0);
   const [quantity, setQuantity] = useState(localStorage.getItem("quantity") || "");
-  const [expiryDate, setExpiryDate] = useState(localStorage.getItem("expiryDate"));
-  const [packagingDate, setpackagingDate] = useState(localStorage.getItem("packagingDate"));
+  const [expiryDate, setExpiryDate] = useState();
+  const [packagingDate, setpackagingDate] = useState();
   const [selectedCategory, setSelectedCategory] = useState(localStorage.getItem("selectedCategory") || null);
   const [selectedSubCategory, setSubSelectedCategory] = useState(localStorage.getItem("selectedSubCategory") || null);
   const [selectedBrand, setSelectedBrand] = useState(localStorage.getItem("selectedBrand") || null);
@@ -44,7 +44,7 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   const [progress, setProgress] = useState(0);
   const [isAdding, setIsAdding] = useState(false);
   const [editorContent, setEditorContent] = useState(localStorage.getItem("editorContent") || '');
-  const [selectedStatus, setSelectedStatus] = useState(localStorage.getItem("selectedStatus") || 0);
+  const [selectedStatus, setSelectedStatus] = useState();
   const [costPerItem, setCostPerItem] = useState(localStorage.getItem("costPerItem") || "");
   const [profit, setProfit] = useState(localStorage.getItem("profit") || "");
   const [margin, setMargin] = useState(localStorage.getItem("margin") || "");
@@ -116,7 +116,6 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
   const handleEditorChange = (content) => {
     setEditorContent(content);
   };
-;
 
   const SelectedProductStatus = (status) => {
     setSelectedStatus(status);
@@ -248,11 +247,9 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
         }
       });
 
-      // Clear local storage
-      // clearLocalStorage();
+      clearLocalStorage();
 
-      // Reset fields after successful submission
-      // resetFields();
+      resetFields();
       fetchProducts();
       toast.success("Product added successfully");
       onClose(); 
@@ -306,9 +303,6 @@ const Model_Inventory = ({ isOpen, onClose, onProductAdded }) => {
     setpackagingDate(null);
     setFiles([]); // Reset files
   };
-
-
-
 
   return (
     <>

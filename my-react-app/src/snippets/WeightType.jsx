@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import CustomSelect from './CustomSelect';
 
-export default function SelectLabels({ onWeightChange }) {
+export default function SelectLabels({ onWeightChange,onUpdateValue }) {
   const [weight, setWeight] = useState('kg'); 
+
+  useEffect(() => {
+    if (onUpdateValue) {
+      setWeight(onUpdateValue);
+    }
+  }, [onUpdateValue]);
 
   useEffect(() => {
     const savedWeight = localStorage.getItem("weightType") || 'kg';

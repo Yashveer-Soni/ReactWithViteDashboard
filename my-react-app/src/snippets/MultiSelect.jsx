@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const MultiSelect = ({ onChangeSelections }) => {
+const MultiSelect = ({ onChangeSelections,onUpdateValue }) => {
     const [collections] = useState([
         'Collection 1', 
         'Collection 2', 
@@ -12,6 +12,12 @@ const MultiSelect = ({ onChangeSelections }) => {
     const [selectedCollections, setSelectedCollections] = useState([]);
     const [inputValue, setCollectionValue] = useState('');
     const [filteredCollections, setFilteredCollections] = useState(collections);
+
+    useEffect(() => {
+        if (onUpdateValue) {
+            setSelectedCollections(onUpdateValue);
+        }
+      }, [onUpdateValue]);
 
     useEffect(() => {
         // Filter collections based on the input value
@@ -58,6 +64,7 @@ const MultiSelect = ({ onChangeSelections }) => {
                     >
                         <span>{collection}</span>
                         <button
+                            type='button'
                             className="ml-2 text-white hover:text-white"
                             onClick={() => handleRemove(collection)}
                         >

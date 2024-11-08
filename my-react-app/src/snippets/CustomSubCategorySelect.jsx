@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import CustomSelect from './CustomSelect';
 
-const CustomSubCategorySelect = ({ selectedCategoryId, onSelectSubCategory, selectedSubCategoryId }) => {
+const CustomSubCategorySelect = ({ selectedCategoryId, onSelectSubCategory, selectedSubCategoryId, onUpdateValue }) => {
   const token = localStorage.getItem('access_token');
   const [subCategories, setSubCategories] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(localStorage.getItem("selectedSubCategory") || '');
+  const [selectedOption, setSelectedOption] = useState('');
+
+  useEffect(() => {
+    if (onUpdateValue) {
+        setSelectedOption(onUpdateValue);
+    }
+}, [onUpdateValue]);
 
   useEffect(() => {
     if (selectedCategoryId) { 

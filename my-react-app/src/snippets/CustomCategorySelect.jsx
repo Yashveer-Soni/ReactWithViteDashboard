@@ -2,11 +2,18 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CustomSelect from './CustomSelect';
 
-const CustomCategorySelect = ({ onSelectCategory, selectedCategoryId }) => {
+const CustomCategorySelect = ({ onSelectCategory, selectedCategoryId, onUpdateValue }) => {
   const selected = localStorage.getItem('selectedCategory') || null;
   const [selectedOption, setSelectedOption] = useState('');
+  console.log("selected"+selectedOption);
   const [categories, setCategories] = useState([]);
   const token = localStorage.getItem('access_token');
+
+  useEffect(() => {
+    if (onUpdateValue) {
+        setSelectedOption(onUpdateValue);
+    }
+}, [onUpdateValue]);
 
   useEffect(() => {
     axios

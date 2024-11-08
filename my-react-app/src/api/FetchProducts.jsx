@@ -70,6 +70,7 @@ export const FetchProducts = ({ children }) => {
             setLoading(false);
         }
     };
+    
 
     useEffect(() => {
         fetchProducts(); 

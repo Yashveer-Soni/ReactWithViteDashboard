@@ -2,15 +2,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { BrandsContext } from '../api/FetchBrands';  
 import CustomSelect from './CustomSelect';
 
-const CustomBrandsSelect = ({ selectedBrandId, onSelectBrand }) => {
+const CustomBrandsSelect = ({  onSelectBrand,onUpdateValue }) => {
   const { brands, loading } = useContext(BrandsContext);
   const [selectedOption, setSelectedOption] = useState(localStorage.getItem('selectedBrand') || '');
 
   useEffect(() => {
-    if (selectedBrandId) {
-      setSelectedOption(selectedBrandId);
+    if (onUpdateValue) {
+      setSelectedOption(onUpdateValue);
     }
-  }, [selectedBrandId]);
+  }, [onUpdateValue]);
 
   const handleChange = (value) => {
     setSelectedOption(value);

@@ -1,13 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 
-const TagSelect = ({ onChangeTags }) => {
+const TagSelect = ({ onChangeTags,onUpdateValue }) => {
     const [tags, setTags] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const inputRef = useRef(null); 
 
+    useEffect(() => {
+        if (onUpdateValue) {
+            setTags(onUpdateValue);
+        }
+      }, [onUpdateValue]);
     const handleKeyDown = (event) => {
         if (event.key === 'Enter' && inputValue.trim()) {
-            event.preventDefault(); // Prevents page refresh or input clearing
+            event.preventDefault(); 
             if (!tags.includes(inputValue.trim())) { 
                 const newTags = [...tags, inputValue.trim()];
                 setTags(newTags);
@@ -37,6 +42,7 @@ const TagSelect = ({ onChangeTags }) => {
                 >
                     <span>{tag}</span>
                     <button
+                       type='button'
                         className="ml-2 text-white hover:text-white focus:outline-none"
                         onClick={() => handleTagRemove(tag)}
                         aria-label={`Remove tag ${tag}`}

@@ -275,6 +275,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Stock
                             </NavLink>
                           </li>
+                          <li>
+                            <NavLink
+                              to="/inventory/collection/"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Collection
+                            </NavLink>
+                          </li>
                         </ul>
                       </div>
                     </React.Fragment>

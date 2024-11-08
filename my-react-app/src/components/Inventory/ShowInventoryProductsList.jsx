@@ -9,8 +9,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import AlertDialog from "../../snippets/AlertDialog";
-// import UpdateProduct from "./UpdateProduct"; 
+import AlertDialog from "../../snippets/AlertDialog";
+import UpdateProduct from "./UpdateProduct"; 
 import exportToExcel from "../../utils/exportToExcel";
 import TableComponent from "../Tables/TableComponent";
 import ActionButton from "../../snippets/ActionBtn";
@@ -19,7 +19,7 @@ import ProductFilter from '../../Helper/Filter/ProductFilter';
 
 const ShowInventoryProductsList = ({ openModel }) => {
     const { products, loading, error, fetchProducts, currentPage, setCurrentPage, totalPages } = useContext(ProductContext);
-    const { deleteError, handleDeleteProduct } = useHandleDeleteProduct(fetchProducts);
+    const { deleteError, handleDeleteProduct, loadingbar } = useHandleDeleteProduct(fetchProducts);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [productIdToDelete, setProductIdToDelete] = useState(null);
     const [productIdToUpdate, setProductIdToUpdate] = useState(null);
@@ -41,7 +41,6 @@ const ShowInventoryProductsList = ({ openModel }) => {
     };
 
     const openUpdateModal = (productId) => {
-        console.log("clicked");
         setProductIdToUpdate(productId);
         setUpdateModalOpen(true);
     };
@@ -85,11 +84,12 @@ const ShowInventoryProductsList = ({ openModel }) => {
         <>
             
             <ToastContainer style={{zIndex:99999}} />
-            {/* <AlertDialog 
+            <AlertDialog 
                 open={dialogOpen} 
                 handleClose={handleCloseDialog} 
                 handleAgree={handleAgree} 
-            /> */}
+                loading={loadingbar}
+            />
             <div className="flex justify-between items-center mt-5 mb-5">
                 <h3 className="text-xl font-bold">Products</h3>
                 <div className="flex items-center gap-3 relative">
@@ -123,14 +123,14 @@ const ShowInventoryProductsList = ({ openModel }) => {
                 </div>
             </div>
 
-            {/* {updateModalOpen && (
+            {updateModalOpen && (
                 <UpdateProduct
                     productId={productIdToUpdate}
                     isOpen={updateModalOpen}
                     onClose={handleCloseUpdateModal}
                     onProductUpdated={fetchProducts}
                 />
-            )} */}
+            )}
        </>
     );
 };
