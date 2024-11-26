@@ -53,7 +53,7 @@ export default function ShowCollection() {
                     Name
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Position
+                    Products
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Status
@@ -72,11 +72,7 @@ export default function ShowCollection() {
                     </div>
                 </td>
                 <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                    <img class="w-10 h-10 rounded-full" src="/docs/images/people/profile-picture-1.jpg" alt="Jese image"/>
-                    <div class="ps-3">
-                        <div class="text-base font-semibold">Neil Sims</div>
-                        <div class="font-normal text-gray-500">neil.sims@flowbite.com</div>
-                    </div>  
+                        <div class="text-center font-semibold">Neil Sims</div>
                 </th>
                 <td class="px-6 py-4">
                     React Developer
