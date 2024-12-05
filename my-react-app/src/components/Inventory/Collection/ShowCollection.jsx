@@ -1,11 +1,25 @@
-import React from 'react'
-
+import React, { useContext, useState } from 'react'
+import { CollectionsContext } from '../../../api/FetchCollections'
+import {  Icon } from '@iconify/react/dist/iconify.js';
+import AddCollection from './addCollection';
 export default function ShowCollection() {
+    const { collections,deleteCollection, loading, error } = useContext(CollectionsContext);
+    const [collectionId,setCollectionId]=useState(null);
+    const[isOpen,setIsOpen]=useState(false);
+
+    const handleDeleteCollection=(collectionId)=>{
+        deleteCollection(collectionId);
+    }
+    const handleEditCollection=(collectionId)=>{
+        setIsOpen(true);
+        setCollectionId(collectionId);
+    }
   return (
     
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <div class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4">
         <div>
+            <AddCollection closeModal={()=>{setIsOpen(false)}} isOpen={isOpen} collectionId={collectionId} />
             <button id="dropdownActionButton" data-dropdown-toggle="dropdownAction" class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-0 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
                 <span class="sr-only">Action button</span>
                 Action
@@ -53,7 +67,7 @@ export default function ShowCollection() {
                     Name
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Products
+                    Slug
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Status
@@ -64,28 +78,45 @@ export default function ShowCollection() {
             </tr>
         </thead>
         <tbody>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                <td class="w-4 p-4">
-                    <div class="flex items-center">
-                        <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                        <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
-                    </div>
-                </td>
-                <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                        <div class="text-center font-semibold">Neil Sims</div>
-                </th>
-                <td class="px-6 py-4">
-                    React Developer
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center">
-                        <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> Online
-                    </div>
-                </td>
-                <td class="px-6 py-4">
-                    <a href="#" type="button" data-modal-target="editUserModal" data-modal-show="editUserModal" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit user</a>
-                </td>
-            </tr>
+            {collections.map((collection,index)=>(
+                <tr key={index} class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <td class="w-4 p-4">
+                        <div class="flex items-center">
+                            <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                            <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                        </div>
+                    </td>
+                    <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                            <div class="text-center font-semibold">{collection.name}</div>
+                    </th>
+                    <td class="px-6 py-4">
+                        {collection.slug}
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            {collection.isActive?(
+                                <>
+                                <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div> 
+                                Online
+                                </>
+                            ):(
+                                <>
+                                <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> 
+                                Offline
+                                </>
+                            )}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 flex items-center gap-3">
+                        <span onClick={()=>{handleDeleteCollection(collection.id)}} className='text-red-500 cursor-pointer'>
+                            <Icon icon="icon-park-twotone:delete-one" width="20" height="20" />
+                        </span>
+                        <span onClick={()=>{handleEditCollection(collection)}} className='text-blue-500 cursor-pointer'>
+                            <Icon icon="line-md:edit-full-twotone" width="24" height="24" />
+                        </span>
+                    </td>
+                </tr>
+            ))}
        
         </tbody>
     </table>

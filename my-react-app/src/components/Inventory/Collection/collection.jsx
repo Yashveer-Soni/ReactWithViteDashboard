@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import AddCollection from './addCollection';
 import ShowCollection from './ShowCollection';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { CollectionsProvider } from '../../../api/FetchCollections';
 
 export default function Collection() {
-    const [isOpen, setIsOpen] = useState(false); // Set the initial state to `false`.
+    const [isOpen, setIsOpen] = useState(false);
 
     const handleClick = () => {
         setIsOpen((prev) => !prev); // Toggle the modal state
@@ -32,8 +33,10 @@ export default function Collection() {
                 Create Collection
             </button>
             </div>
+            <CollectionsProvider>
             <ShowCollection />
             <AddCollection isOpen={isOpen} closeModal={closeModal} />
+            </CollectionsProvider>
         </div>
     );
 }

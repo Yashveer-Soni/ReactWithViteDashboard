@@ -2,9 +2,12 @@ import React, { useContext, useState } from 'react';
 import { ProductContext } from '../../../api/FetchProducts';
 import { toast, ToastContainer } from 'react-toastify';
 
-export default function BrowseProduct({ isOpen, isClose, selectedProducts }) {
+export default function BrowseProduct({ isOpen, isClose, selectedProducts,collectionId }) {
   const [selected, setSelected] = useState([]);
   const { products, loading, error, fetchProducts, currentPage, setCurrentPage, totalPages } = useContext(ProductContext);
+  if(collectionId!=null){
+    setSelected(products.find(id=collectionId));
+  }
   
   const onSelectAll = (e) => {
     if (e.target.checked) {

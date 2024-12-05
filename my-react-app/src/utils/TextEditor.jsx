@@ -36,7 +36,7 @@ const TextEditor = ({ onChange, onUpdateValue }) => {
 
 
     return (
-        <div>
+        <div >
             <ReactQuill
                 theme='snow'
                 formats={['header', 'font', 'size', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image', 'video']}
@@ -44,7 +44,7 @@ const TextEditor = ({ onChange, onUpdateValue }) => {
                 modules={modules}
                 onChange={handleChange}
                 value={content}
-                className='bg-white rounded-[10px] text-black '
+                className='bg-white  rounded-[10px] text-black '
             />
         </div>
     );
